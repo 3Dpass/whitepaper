@@ -375,8 +375,8 @@ It is being worked on…
 - pass3d recognition toolkit: [https://github.com/3Dpass/pass3d]([https://github.com/3Dpass/pass3d)
 .obj format: [https://en.wikipedia.org/wiki/Wavefront_.obj_files](https://en.wikipedia.org/wiki/Wavefront_.obj_files)
 - Asset committee: A group of reputable members presented as 3dpass network accounts elected by Council** vote and eligible to moderate the assets-related content available, such as: 
-Asset categories and algorithms;
-- The list of external resources for the verification of ownership.  
+  - Asset categories and algorithms;
+  - The list of external resources for the verification of ownership.  
 - Council: A group of reputable members presented as 3dpass network accounts elected by the majority of P3D holders [https://3dpass.org/governance#council](https://3dpass.org/governance#council)
 - WIPO: [https://en.wikipedia.org/wiki/World_Intellectual_Property_Organization](https://en.wikipedia.org/wiki/World_Intellectual_Property_Organization)
 - 3dpass wallet: [https://github.com/3Dpass/wallet](https://github.com/3Dpass/wallet)
