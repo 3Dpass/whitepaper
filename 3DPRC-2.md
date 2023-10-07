@@ -19,7 +19,7 @@ The protocol is weaved into “The Ledger of Things” PoW component in a way to
 
 Every judgement provided by miners about the object authenticity is protected by a secret knowledge of its HASH ID** being unavailable for them, until they get the object processed. Every proof is being verified by the majority of the network to make a final decision on whether to accept or reject the block containing the judgement;
 
-**3. [PoScan Substrate-based pallet](https://github.com/3Dpass/3DP/tree/test/pallets/poscan) (storage and [API](https://github.com/3Dpass/3DP/wiki/3DPRC%E2%80%902-PoScan-API))**
+**3. [PoScan Substrate-based pallet](https://github.com/3Dpass/3DP/tree/main/pallets/poscan) (storage and [API](https://github.com/3Dpass/3DP/wiki/3DPRC%E2%80%902-PoScan-API))**
 
 The PoScan pallet is integrated into the network runtime providing the access to the network decentralized storage by means of the object tokenization [API](https://github.com/3Dpass/3DP/wiki/3DPRC%E2%80%902-PoScan-API), which allows for:
 - the user object authentication and its protection from being copied to the extent for the recognition algorithm precision;
