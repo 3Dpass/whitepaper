@@ -19,13 +19,13 @@ The protocol is weaved into “The Ledger of Things” PoW component in a way to
 
 Every judgement provided by miners about the object authenticity is protected by a secret knowledge of its HASH ID** being unavailable for them, until they get the object processed. Every proof is being verified by the majority of the network to make a final decision on whether to accept or reject the block containing the judgement;
 
-**3. [PoScan Substrate-based pallet](https://github.com/3Dpass/3DP/tree/main/pallets/poscan) (storage and [API](https://github.com/3Dpass/3DP/wiki/3DPRC%E2%80%902-PoScan-API))**
+**3. [PoScan](https://github.com/3Dpass/3DP/tree/main/pallets/poscan) module, [poscanAssets](https://github.com/3Dpass/3DP/tree/main/pallets/poscan-assets) module  (storage and [API](https://github.com/3Dpass/3DP/wiki/3DPRC%E2%80%902-PoScan-API))**
 
-The PoScan pallet is integrated into the network runtime providing the access to the network decentralized storage by means of the object tokenization [API](https://github.com/3Dpass/3DP/wiki/3DPRC%E2%80%902-PoScan-API), which allows for:
+The `PoScan` pallet as well as the `poscanAssets` pallet are both integrated into the network runtime providing the access to the network decentralized storage by means of the object tokenization [API](https://github.com/3Dpass/3DP/wiki/3DPRC%E2%80%902-PoScan-API), which allows for:
 - the user object authentication and its protection from being copied to the extent for the recognition algorithm precision;
 - non-fungible digital asset creation;
 - property rights definition and its transfers;
-- backed cryptocurrency issuance (fungible tokens backed by the asset)
+- backed cryptocurrency issuance (the tokenization of the object share)
 
 ## The Object categories and recognition algorithms
 This is apparent, that it does not make any sense to compare objects by its HASH ID, provided they got processed with different recognition algorithms/parameters. However, HASH IDs need to be compared in order to guarantee for users the absence of copies on the blockchain data base.
@@ -43,6 +43,19 @@ Initial list of categories is presented as follows:
 - Texts
 
 The categories and presets are being moderated by the Asset committee** vote. The committee members are being assigned by the Council**.
+
+## The object additional properties
+3DPRC-2 allows to endow the object with its additional properties, which will be utilized for the object tokenization. The object properties are categorized as follows: 
+
+**Relative:**
+  - `Non-fungible` (propIdx: 0) - allows for the object to be tokenized as a non-fungible asset. `MaxSupply=1` rule will be applied to the token created for this property
+  - `Share` (propIdx: 1) - allows for the tokenization of the object share (%), the `MaxSupply` value format of which is restricted to `10^x`. So, the `MaxSupply=10^x` rule will be applied to the token created for this property.
+
+ **Absolute:** 
+  - `Weight` (propIdx: 2) - allows for the tokenization of the object weight, the `MaxSupply` value is limited to `2^128` (max value in the system).
+  - Any other measurable object property, which could be presented as an abloute value (ex. `Length`, `Square`, `Volume`, `Density`, `Clarity`, `Presure`, `Time`, `Speed`, `Frequency`, `Bandwith`, `Amount of symbols` and so forth)
+
+The list of the object properties available on mainnet is being managed by the Council** vote. 
 
 ## The Object authentication protocol
 The protocol represents a sequence of actions performing by validators and miners actively participating in the network consensus at the time an object is being submitted by user. 
@@ -65,6 +78,7 @@ admin@admin pass3d % ./target/release/pass3d -s 12 -g 8 -a grid2d_v3a -d 10 -i r
 "97c538a99641202385572df245d9cfb300f895a6c94e7caf074023a5ead1c62c"
 “db2453f53270c9003a63b4d643d9bcc991ad7630d70a0d1511781f74a7a00fee"
 ```
+- The list of the object additional properties, which will be used as the options and `MaxSupply` limits on the object tokenizaton  
 - Authentication fee P3D/Byte: Let’s take 100 P3D as an example. This fee will be distributed among the miners and validators taking part in the process (70 miners /30 validators). The fee will be charged for each confirmation ordered (1 confirmation = 1 block). The fee can be set up by Council** vote.
 - Storage fee: P3D/Byte (regular network storage fee)
 - Number of confirmations: let’s take 6, for example. The more confirmations the user orders, the more reliable result He gets, especially, when it comes to the network potentially being attacked at the time. This is unlikely to happen, however, there is always a possibility for every blockchain network to get through this sort of experience. It is expected that the user is able to follow the gap between Best block and the Block finalized (normally the gap = 2 blocks) to estimate the network state, before submitting the order.
@@ -146,6 +160,16 @@ This is a snapshot example of the object `Estimated` from the storage (short ver
       numApprovals: 6
       estRewards: 70,000,000,000,000,000
       authorRewards: 30,000,000,000,000,000
+      prop: [
+        {
+          "propIdx": 0,
+          "maxValue": 1
+        }
+        {
+          "propIdx": 1,
+          "maxValue": 100000
+        }
+      ]
     }
   ]
 ]
@@ -283,6 +307,16 @@ This is a snapshot example of the object approved from the storage (short versio
       numApprovals: 6
       estRewards: 70,000,000,000,000,000
       authorRewards: 30,000,000,000,000,000
+      prop: [
+        {
+          "propIdx": 0,
+          "maxValue": 1
+        }
+        {
+          "propIdx": 1,
+          "maxValue": 100000
+        }
+      ]
     }
   ]
 ]
@@ -359,20 +393,85 @@ The message must be signed with the owner P3D account (in the example above `d1E
 
 The combination of such aspects as the timestamp, copy protection, data change protection make “The Ledger of Things” one of the most reliable decentralized data bases to make the first publication for any new object created. It would be enough for its owner to get the object through the authentication procedure and claim they have all the rights required. 
 
-## Digital asset structure
-It is being worked on…
-
 ## Backed currency issuance
-It is being worked on…
+### Backed asset creation
+This method, provided by the [poscanAssets](https://github.com/3Dpass/3DP/tree/main/pallets/poscan-assets) module, allows for the object owner to create a backed currency (a token backed by the object property). Only one of the object properties is allowed to be tokenized, as long as the object is `Approved` at the authentication stage (see more [poscan.putObject](#1-poscanputobject)). 
+
+By means of dealing with the object properties, it is possible to turn the object into either Fungible or Non-fungible asset, depending on the purpose of its tokenization. For example, the tokenization of the object `Share` (as well as such properties as `Weight`, `Square`, `Volume`, `Length`, etc) will always stand for its collective ownership or ICO (Initial Coin Offering). These properties will always be tokenized as **Fungible assets**, the `MaxSupply` of which is limited to the property `value` attached to the object. For example, if the object `weight` is  1000 gram, then the token `MaxSupply=1000` limit will be set up for the token created (you won't be able to issue more than 1000 minimum indivisible units). While transferring tokens, the object share is being transferred. 
+
+There is a specific property named `Non-Fungible`, which is leveraged to get the object tokenized as a Non-fungible asset. If chosen, the `MaxSupply = 1` limit will be applied to the token created. Whereas `1` is the minimum indivisible unit of The Ledger of Things. By means of transferring this unit, the ownership of the entire object is being transferred.  
+
+```
+create(
+    id,
+    admin,
+    minBalance,
+    objDetails
+)
+```
+- `id: Compact<u32>` - the index id for the asset
+- `admin: AccountId` - the admin P3D account
+- `minBalance: u128` - min balance in tokens to keep any account alive (accounts going below min balance are going to be removed)
+- `objDetails`: 
+  - `objIdx: u32` - the object index id on the [poScan](https://github.com/3Dpass/3DP/tree/main/pallets/poscan) module storage
+  - `propIdx: u32` - the property index id on the [poScan](https://github.com/3Dpass/3DP/tree/main/pallets/poscan) module storage
+  - `maxSupply: u128` - MaxSupply limit in tokens, which is going to be apply to the asset. Must not exceed the object property `MaxValue` (see more [poscan.putObject](#1-poscanputobject)).
+ 
+The `poscanAsset` logic gets the asset bounded to the user object and thus guarantees to have the token `MaxSupply` complied with the limit set up by the property value.
+
+### Setting up the asset metadata
+This method allows to set up metadata for the asset actually created. 
+
+```
+setMetadata(
+         id, 
+         name, 
+         symbol, 
+         decimals
+)
+```
+- `id: Compact<u32>` - the index id of the asset, actually existing on the [poscanAssets](https://github.com/3Dpass/3DP/tree/main/pallets/poscan-assets) module storage, you are about to set up metadata for
+- `name: Bytes` - the asset name (ex. "My very expensive diamond shares")
+- `symbol: Bytes` - the asset symbol (ex. XYZ - 1000 XYZ)
+- `decimals: u8` - the number of decimals applied to the asset (ex. `decimals: 4` will set up min indivisible unit at `0.0001 XYZ`)
+
+### Tokens minting
+
+Once having the asset created and set up its metadata, it is possible to use this method to mint some tokens. `MaxSupply` limit the asset has been [created](#6-poscanassetscreate) with cannot be exceeded.
+
+```
+mint(
+   id,
+   amount
+)
+```
+-  `id: Compact<u32>` -  the index id of the asset, actually existing on the [poscanAssets](https://github.com/3Dpass/3DP/tree/main/pallets/poscan-assets) module storage, you are about to mint tokens for
+- `amount: Compact<u128>` - amount to mint
+
+### Token transfers
+
+This method allows to transfer minted tokens from one account to another. Some P3D is required to cover the Ledger of Things transaction fee. 
+
+```
+transfer(
+       id, 
+       target, 
+       amount
+)
+```
+- `id: Compact<u32>` -  the index id of the asset, actually created on the [poscanAssets](https://github.com/3Dpass/3DP/tree/main/pallets/poscan-assets) module storage
+- `target: AccountId` - P3D account to receive the transfer
+- `amount: Compact<u128>` - amount to transfer
 
 ## PoScan API
 - Explore the actual API methods available on WIKI: [PoScan API](https://github.com/3Dpass/3DP/wiki/3DPRC%E2%80%902-PoScan-API)
-- PoScan pallet implementation: [PoScan pallet](https://github.com/3Dpass/3DP/tree/test/pallets/poscan)
+- `PoScan` module implementation: [PoScan pallet](https://github.com/3Dpass/3DP/tree/test/pallets/poscan)
+- `poscanAssets` module implementation: [poscanAssets pallet](https://github.com/3Dpass/3DP/tree/main/pallets/poscan-assets)
 
 ## Reference
-- Grid2d recognition algorithm: [https://3dpass.org/grid2d](https://3dpass.org/grid2d) 
+- `Grid2d` recognition algorithm: [https://3dpass.org/grid2d](https://3dpass.org/grid2d) 
 - HASH ID: The object identity comes out as a result of the object recognition ([https://3dpass.org/features#3drecognition-hash-id](https://3dpass.org/features#3drecognition-hash-id)) 
-- pass3d recognition toolkit: [https://github.com/3Dpass/pass3d]([https://github.com/3Dpass/pass3d)
+- `pass3d` recognition toolkit: [https://github.com/3Dpass/pass3d]([https://github.com/3Dpass/pass3d)
 .obj format: [https://en.wikipedia.org/wiki/Wavefront_.obj_files](https://en.wikipedia.org/wiki/Wavefront_.obj_files)
 - Asset committee: A group of reputable members presented as 3dpass network accounts elected by Council** vote and eligible to moderate the assets-related content available, such as: 
   - Asset categories and algorithms;
