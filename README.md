@@ -1,2 +1,2 @@
 # whitepaper
-The Ledger of Unique Things
+The Ledger of Things
